@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pyLoad Connector Settings</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      width: 500px;
+      margin: 2rem auto;
+      min-height: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="icons/icon-48.png" alt="pyLoad">
+    <h1>Settings</h1>
+  </header>
+
+  <section class="form-group">
+    <label for="server-url">Server URL</label>
+    <input type="url" id="server-url" placeholder="http://localhost:8000">
+    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+      Use <strong>http://</strong> for local connections. Use <strong>https://</strong> only if you have SSL
+      certificates configured.
+    </p>
+  </section>
+
+  <section class="form-group">
+    <label for="api-key">API Key</label>
+    <input type="password" id="api-key" placeholder="pl_...">
+    <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.5rem;">
+      Retrieve your API key from the pyLoad Web Interface (Settings -> Users -> Manage Api Keys).
+    </p>
+  </section>
+
+  <footer>
+    <button id="test-btn" class="secondary">Test Connection</button>
+    <button id="save-btn">Save Configuration</button>
+  </footer>
+  <div id="status" class="status-msg"></div>
+
+  <script src="options.js"></script>
+</body>
+
+</html>

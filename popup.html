@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pyLoad Connector</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="icons/icon-48.png" alt="pyLoad">
+    <h1>pyLoad Connector</h1>
+  </header>
+
+  <section class="form-group">
+    <div style="display: flex; gap: 0.75rem;">
+      <input type="text" id="link-input" placeholder="Paste link here..." style="flex: 1;">
+      <button id="add-btn" style="width: 80px;">Add</button>
+    </div>
+  </section>
+
+  <div id="status" class="status-msg"></div>
+
+  <section class="download-list">
+    <h2 style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Active Downloads</h2>
+    <div id="downloads-container">
+      <div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">
+        No active downloads
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <button class="secondary" id="open-webui">Open WebUI</button>
+    <button class="secondary" id="open-settings">Settings</button>
+  </footer>
+
+  <script src="popup.js"></script>
+</body>
+</html>
