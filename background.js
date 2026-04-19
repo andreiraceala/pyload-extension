@@ -70,9 +70,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       await loadConfig();
       return { success: true };
     }
-    
+
     await ensureConfig();
-    
+
     if (message.type === 'ADD_LINK') {
       return await addLinkToPyload(message.url);
     } else if (message.type === 'GET_STATUS') {
@@ -117,7 +117,7 @@ async function apiFetch(endpoint, options = {}) {
 
   const url = `${config.serverUrl}${endpoint}`;
   const method = options.method || 'GET';
-  
+
   const defaultOptions = {
     headers: {
       'Accept': 'application/json',
@@ -135,20 +135,20 @@ async function apiFetch(endpoint, options = {}) {
     url: url,
     method: method
   });
-  
+
   try {
     const response = await fetch(url, finalOptions);
-    
+
     if (response.status === 401 || response.status === 403) {
       throw new Error('Authentication failed. Please check your API Key.');
     }
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`[pyLoad] API Error: ${response.status} ${errorText}`);
       throw new Error(`API Error: ${response.status} ${errorText}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error(`[pyLoad] Network Error: ${error.message}`);
@@ -160,7 +160,7 @@ async function getPyloadStatus() {
   try {
     const serverStatus = await apiFetch('/api/status_server');
     const downloads = await apiFetch('/api/status_downloads');
-    
+
     return { success: true, serverStatus, downloads };
   } catch (error) {
     return { success: false, error: error.message };
@@ -169,17 +169,30 @@ async function getPyloadStatus() {
 
 async function addLinkToPyload(linkUrl) {
   try {
+    // Extract filename from URL to use as package name
+    let fileName = 'Unamed File';
+    try {
+      const url = new URL(linkUrl);
+      const pathname = url.pathname;
+      const segments = pathname.split('/').filter(s => s.length > 0);
+      if (segments.length > 0) {
+        fileName = decodeURIComponent(segments[segments.length - 1]);
+      }
+    } catch (e) {
+      console.warn('[pyLoad] Could not extract filename from URL:', e);
+    }
+
     const response = await apiFetch('/api/add_package', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: 'Browser Download',
+        name: fileName,
         links: [linkUrl],
         dest: 1
       })
     });
 
-    notify('Success', 'Link added to pyLoad queue.');
+    notify('Success', `Added "${fileName}" to pyLoad queue.`);
     return { success: true };
   } catch (error) {
     notify('Error', error.message);
