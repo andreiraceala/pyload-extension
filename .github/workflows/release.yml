@@ -52,12 +52,10 @@ jobs:
           git push origin "$TAG"
 
       - name: Build extension
-        if: steps.check_tag.outputs.exists == 'false'
         run: |
           npx web-ext build --overwrite-dest
 
       - name: Sign extension
-        if: steps.check_tag.outputs.exists == 'false'
         run: |
           npx web-ext sign --channel=unlisted --api-key=${{secrets.AMO_JWT_ISSUER}}  --api-secret=${{secrets.AMO_JWT_SECRET}}
 
