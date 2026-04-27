@@ -3,6 +3,14 @@
     "pyload-connector@andrei.local": {
       "updates": [
         {
+          "version": "1.5.7",
+          "update_link": "https://github.com/andreiraceala/pyload-extension/releases/download/v1.5.7/pyload_connector-1.5.7.xpi"
+        },
+        {
+          "version": "1.5.6",
+          "update_link": "https://github.com/andreiraceala/pyload-extension/releases/download/v1.5.6/pyload_connector-1.5.6.xpi"
+        },
+        {
           "version": "1.5.5",
           "update_link": "https://github.com/andreiraceala/pyload-extension/releases/download/v1.5.5/pyload_connector-1.5.5.xpi"
         },

@@ -29,6 +29,10 @@ This is a WebExtensions (Manifest V3) browser extension with the following struc
   - **bugfix/**: Bug fixes (e.g., `bugfix/api-error-handling`)
 
 
+## Environment Variables
+Environment variables are defined in the `.env` file and should be used for sensitive information such as API keys. The following variables are expected:
+- `${AMO_JWT_ISSUER}`: The issuer for the JWT token used to authenticate with the AMO API.
+- `${AMO_JWT_SECRET}`: The secret key for the JWT token used to authenticate with the AMO API.
 
 ## Build
 - run `web-ext build --overwrite-dest` to build the extension for distribution (creates a .zip file)
