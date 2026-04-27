@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const linkInput = document.getElementById('link-input');
-  const addBtn = document.getElementById('add-btn');
   const statusEl = document.getElementById('status');
   const downloadsContainer = document.getElementById('downloads-container');
   const queueContainer = document.getElementById('queue-container');
@@ -62,23 +60,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Add Link Button
-  addBtn.addEventListener('click', () => {
-    const url = linkInput.value.trim();
-    if (!url) return;
-
-    addBtn.disabled = true;
-    chrome.runtime.sendMessage({ type: 'ADD_LINK', url }, (response) => {
-      addBtn.disabled = false;
-      if (response && response.success) {
-        linkInput.value = '';
-        showStatus('Link added successfully!', 'success');
-        updateActiveDownloads();
-      } else {
-        showStatus(response?.error || 'Failed to add link', 'error');
-      }
-    });
-  });
 
   openWebuiBtn.addEventListener('click', () => {
     if (serverUrl) {

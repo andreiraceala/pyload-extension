@@ -4,6 +4,11 @@ applyTo: ["**/*.js", "*.html"]
 ---
 
 # pyLoad-ng Extension Guidelines
+ - Allways use semantic versioning
+ - Always add comments and documentation to the code
+ - Always increment version in manifest.json when making changes
+ - Always increment version in update.json when making changes
+ 
 
 ## Extension Architecture
 
@@ -23,5 +28,7 @@ This is a WebExtensions (Manifest V3) browser extension with the following struc
   - **feature/**: New features and experiments (e.g., `feature/new-ui`)
   - **bugfix/**: Bug fixes (e.g., `bugfix/api-error-handling`)
 
+
+
 ## Build
-- run `package.sh` to build the extension for distribution (creates a .zip file)
+- run `bash ./package.sh` to build the extension for distribution (creates a .zip file)
