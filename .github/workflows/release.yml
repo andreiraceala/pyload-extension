@@ -1,5 +1,7 @@
 name: Create Release
 
+
+
 on:
   push:
     branches:
@@ -8,7 +10,7 @@ on:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     permissions:
       contents: write
     steps:

@@ -1,6 +1,6 @@
 ---
 description: "Use when writing code for the pyLoad-ng Firefox extension. Cover architecture, API interaction, security, and UI/UX patterns."
-applyTo: ["**/*.js", "*.html"]
+applyTo: "**/*.{js,html,css,json}"
 ---
 
 # pyLoad-ng Extension Guidelines
