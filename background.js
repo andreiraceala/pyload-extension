@@ -77,6 +77,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return await addLinkToPyload(message.url);
     } else if (message.type === 'GET_STATUS') {
       return await getPyloadStatus();
+    } else if (message.type === 'GET_DOWNLOAD_HISTORY') {
+      return await getDownloadHistory(message.offset || 0, message.limit || 50);
     } else if (message.type === 'TEST_CONNECTION') {
       return await testConnection(message.serverUrl, message.apiKey);
     }
@@ -162,6 +164,32 @@ async function getPyloadStatus() {
     const downloads = await apiFetch('/api/status_downloads');
 
     return { success: true, serverStatus, downloads };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+}
+
+async function getDownloadHistory(offset = 0, limit = 50) {
+  try {
+    const allDownloads = await apiFetch('/api/status_downloads');
+    
+    // Sort downloads by added timestamp (newest first)
+    const sorted = (allDownloads || []).sort((a, b) => {
+      const timeA = a.added || 0;
+      const timeB = b.added || 0;
+      return timeB - timeA;
+    });
+
+    const total = sorted.length;
+    const paginatedData = sorted.slice(offset, offset + limit);
+
+    return {
+      success: true,
+      data: paginatedData,
+      total: total,
+      offset: offset,
+      limit: limit
+    };
   } catch (error) {
     return { success: false, error: error.message };
   }
