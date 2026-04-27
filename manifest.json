@@ -1,11 +1,9 @@
 {
   "manifest_version": 3,
   "name": "pyLoad-ng connector",
-  "version": "1.6.4",
+  "version": "1.6.5",
   "author": "Andrei Raceala",
-  "custom_license": {
-     "en-US": "MIT License - https://opensource.org/licenses/MIT"
-  },
+" license": "LICENSE",
   "browser_specific_settings": {
     "gecko": {
       "id": "pyload-connector@andrei.local",
