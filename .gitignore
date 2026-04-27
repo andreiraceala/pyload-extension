@@ -1,9 +1,4 @@
-api.key
 Pyload-extension.code-workspace
-pyload-extension.zip
-secrets/mozilla.token
-secrets/api.key
-.secrets/mozilla.token
 .gitignore
 .amo-upload-uuid
 .secrets/mozilla.user
@@ -12,3 +7,4 @@ web-ext-artifacts/*
 .git
 *.zip
 *.xpi
+.secrets/**
