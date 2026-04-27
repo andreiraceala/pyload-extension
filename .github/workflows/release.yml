@@ -49,17 +49,18 @@ jobs:
           git tag "$TAG"
           git push origin "$TAG"
 
-      - name: Build extension
+      - name: Build and sign extension
         if: steps.check_tag.outputs.exists == 'false'
         run: |
           npx web-ext build --overwrite-dest
+          npx web-ext sign --channel=unlisted --api-key=${{secrets.AMO_JWT_ISSUER}}  --api-secret=${{secrets.AMO_JWT_SECRET}}
 
       - name: Create Release
         if: steps.check_tag.outputs.exists == 'false'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.get_version.outputs.VERSION }}
-          files: web-ext-artifacts/*.zip
+          files: web-ext-artifacts/*.zip, web-ext-artifacts/*.xpi
           generate_release_notes: true
           draft: false
           prerelease: false
