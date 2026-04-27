@@ -2,3 +2,14 @@ api.key
 andrei.raceala@gmail.com Backup authentication codes.txt
 Pyload-extension.code-workspace
 pyload-extension.zip
+secrets/mozilla.token
+secrets/api.key
+.secrets/mozilla.token
+.gitignore
+.amo-upload-uuid
+.secrets/mozilla.user
+web-ext-artifacts/*
+.env
+.git
+*.zip
+*.xpi

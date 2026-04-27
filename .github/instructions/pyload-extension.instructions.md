@@ -31,4 +31,5 @@ This is a WebExtensions (Manifest V3) browser extension with the following struc
 
 
 ## Build
-- run `bash ./package.sh` to build the extension for distribution (creates a .zip file)
+- run `web-ext build --overwrite-dest` to build the extension for distribution (creates a .zip file)
+- run `web-ext sign --channel=unlisted --api-key={AMO_JWT_ISSUER} --api-secret=${AMO_JWT_SECRET}` to sign and upload the extension

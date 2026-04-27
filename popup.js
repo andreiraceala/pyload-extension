@@ -236,68 +236,145 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderDownloads(downloads) {
+    downloadsContainer.innerHTML = ''; // Clear existing
     if (!downloads || downloads.length === 0) {
       setMessageContent(downloadsContainer, 'No active downloads');
       return;
     }
 
-    downloadsContainer.innerHTML = downloads.map(dl => {
+    downloads.forEach(dl => {
       const statusText = STATUS_MAP[dl.status] || dl.statusmsg || 'Unknown';
       const statusClass = getStatusColor(dl.status);
       const speedText = dl.format_speed || formatSpeed(dl.speed);
       const sizeText = dl.format_size || '';
-      const safeName = escapeHtml(dl.name);
 
-      return `
-        <div class="download-item">
-          <div class="download-info">
-            <span class="download-name" title="${safeName}">${safeName}</span>
-            <span class="download-status ${statusClass}">${statusText}</span>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: ${dl.percent || 0}%"></div>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
-            <span>${sizeText}</span>
-            <span>${speedText}</span>
-          </div>
-        </div>
-      `;
-    }).join('');
+      const dlItem = document.createElement('div');
+      dlItem.className = 'download-item';
+
+      const dlInfo = document.createElement('div');
+      dlInfo.className = 'download-info';
+
+      const dlName = document.createElement('span');
+      dlName.className = 'download-name';
+      dlName.textContent = dl.name;
+      dlName.title = dl.name;
+
+      const dlStatus = document.createElement('span');
+      dlStatus.className = `download-status ${statusClass}`;
+      dlStatus.textContent = statusText;
+
+      dlInfo.appendChild(dlName);
+      dlInfo.appendChild(dlStatus);
+
+      const progressContainer = document.createElement('div');
+      progressContainer.className = 'progress-bar';
+
+      const progressFill = document.createElement('div');
+      progressFill.className = 'progress-fill';
+      progressFill.style.width = `${dl.percent || 0}%`;
+
+      progressContainer.appendChild(progressFill);
+
+      const stats = document.createElement('div');
+      stats.style.display = 'flex';
+      stats.style.justifyContent = 'space-between';
+      stats.style.marginTop = '0.5rem';
+      stats.style.fontSize = '0.75rem';
+      stats.style.color = 'var(--text-secondary)';
+
+      const sizeSpan = document.createElement('span');
+      sizeSpan.textContent = sizeText;
+
+      const speedSpan = document.createElement('span');
+      speedSpan.textContent = speedText;
+
+      stats.appendChild(sizeSpan);
+      stats.appendChild(speedSpan);
+
+      dlItem.appendChild(dlInfo);
+      dlItem.appendChild(progressContainer);
+      dlItem.appendChild(stats);
+
+      downloadsContainer.appendChild(dlItem);
+    });
   }
 
   function renderQueue(packages) {
+    queueContainer.innerHTML = ''; // Clear existing
     if (!packages || packages.length === 0) {
       setMessageContent(queueContainer, 'No packages in queue');
       return;
     }
 
-    queueContainer.innerHTML = packages.map(pkg => {
+    packages.forEach(pkg => {
       const sizeText = pkg.sizetotal ? formatSize(pkg.sizetotal) : 'Unknown size';
       const doneText = pkg.sizedone ? formatSize(pkg.sizedone) : '0 B';
       const linksText = `${pkg.linksdone || 0} / ${pkg.linkstotal || 0} links`;
       const progress = pkg.sizetotal ? Math.round((pkg.sizedone / pkg.sizetotal) * 100) : 0;
-      const safeName = escapeHtml(pkg.name);
 
-      return `
-        <div class="download-item" data-pid="${pkg.pid}">
-          <div class="download-info">
-            <span class="download-name" title="${safeName}">${safeName}</span>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
-              <button class="btn-restart" data-pid="${pkg.pid}">Restart</button>
-              <span class="download-status queued">${linksText}</span>
-            </div>
-          </div>
-          <div class="progress-bar">
-            <div class="progress-fill" style="width: ${progress}%"></div>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
-            <span>${doneText} / ${sizeText}</span>
-            <span>${progress}%</span>
-          </div>
-        </div>
-      `;
-    }).join('');
+      const pkgItem = document.createElement('div');
+      pkgItem.className = 'download-item';
+      pkgItem.dataset.pid = pkg.pid;
+
+      const pkgInfo = document.createElement('div');
+      pkgInfo.className = 'download-info';
+
+      const pkgName = document.createElement('span');
+      pkgName.className = 'download-name';
+      pkgName.textContent = pkg.name;
+      pkgName.title = pkg.name;
+
+      const pkgActions = document.createElement('div');
+      pkgActions.style.display = 'flex';
+      pkgActions.style.gap = '0.5rem';
+      pkgActions.style.alignItems = 'center';
+
+      const restartBtn = document.createElement('button');
+      restartBtn.className = 'btn-restart';
+      restartBtn.dataset.pid = pkg.pid;
+      restartBtn.textContent = 'Restart';
+
+      const pkgStatus = document.createElement('span');
+      pkgStatus.className = 'download-status queued';
+      pkgStatus.textContent = linksText;
+
+      pkgActions.appendChild(restartBtn);
+      pkgActions.appendChild(pkgStatus);
+
+      pkgInfo.appendChild(pkgName);
+      pkgInfo.appendChild(pkgActions);
+
+      const progressContainer = document.createElement('div');
+      progressContainer.className = 'progress-bar';
+
+      const progressFill = document.createElement('div');
+      progressFill.className = 'progress-fill';
+      progressFill.style.width = `${progress}%`;
+
+      progressContainer.appendChild(progressFill);
+
+      const stats = document.createElement('div');
+      stats.style.display = 'flex';
+      stats.style.justifyContent = 'space-between';
+      stats.style.marginTop = '0.5rem';
+      stats.style.fontSize = '0.75rem';
+      stats.style.color = 'var(--text-secondary)';
+
+      const doneSpan = document.createElement('span');
+      doneSpan.textContent = `${doneText} / ${sizeText}`;
+
+      const progressSpan = document.createElement('span');
+      progressSpan.textContent = `${progress}%`;
+
+      stats.appendChild(doneSpan);
+      stats.appendChild(progressSpan);
+
+      pkgItem.appendChild(pkgInfo);
+      pkgItem.appendChild(progressContainer);
+      pkgItem.appendChild(stats);
+
+      queueContainer.appendChild(pkgItem);
+    });
 
     // Add event listeners for restart buttons
     queueContainer.querySelectorAll('.btn-restart').forEach(btn => {
