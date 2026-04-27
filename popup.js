@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const queuePrevBtn = document.getElementById('queue-prev');
   const queueNextBtn = document.getElementById('queue-next');
   const paginationText = document.getElementById('pagination-text');
+  const cleanFinishedBtn = document.getElementById('clean-finished-btn');
 
   let serverUrl = '';
   let queueLoaded = false;
@@ -102,6 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (queueState.offset + queueState.limit < queueState.total) {
       loadQueuePage(queueState.offset + queueState.limit);
     }
+  });
+
+  cleanFinishedBtn.addEventListener('click', () => {
+    cleanFinishedBtn.disabled = true;
+    chrome.runtime.sendMessage({ type: 'DELETE_FINISHED' }, (response) => {
+      cleanFinishedBtn.disabled = false;
+      if (response && response.success) {
+        showStatus('Finished downloads removed', 'success');
+        loadQueuePage(queueState.offset);
+      } else {
+        showStatus(response?.error || 'Failed to remove finished downloads', 'error');
+      }
+    });
   });
 
   const STATUS_MAP = {
@@ -285,10 +299,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const safeName = escapeHtml(pkg.name);
 
       return `
-        <div class="download-item">
+        <div class="download-item" data-pid="${pkg.pid}">
           <div class="download-info">
             <span class="download-name" title="${safeName}">${safeName}</span>
-            <span class="download-status queued">${linksText}</span>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <button class="btn-restart" data-pid="${pkg.pid}">Restart</button>
+              <span class="download-status queued">${linksText}</span>
+            </div>
           </div>
           <div class="progress-bar">
             <div class="progress-fill" style="width: ${progress}%"></div>
@@ -300,6 +317,27 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
       `;
     }).join('');
+
+    // Add event listeners for restart buttons
+    queueContainer.querySelectorAll('.btn-restart').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pid = btn.dataset.pid;
+        btn.disabled = true;
+        btn.textContent = '...';
+        
+        chrome.runtime.sendMessage({ type: 'RESTART_PACKAGE', pid }, (response) => {
+          if (response && response.success) {
+            showStatus('Package restarted', 'success');
+            loadQueuePage(queueState.offset);
+          } else {
+            btn.disabled = false;
+            btn.textContent = 'Restart';
+            showStatus(response?.error || 'Failed to restart package', 'error');
+          }
+        });
+      });
+    });
   }
 
   function updatePaginationControls() {

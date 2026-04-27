@@ -79,6 +79,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       return await getPyloadStatus();
     } else if (message.type === 'GET_QUEUE') {
       return await getQueue(message.offset || 0, message.limit || 50);
+    } else if (message.type === 'RESTART_PACKAGE') {
+      return await restartPackage(message.pid);
+    } else if (message.type === 'DELETE_FINISHED') {
+      return await deleteFinished();
     } else if (message.type === 'TEST_CONNECTION') {
       return await testConnection(message.serverUrl, message.apiKey);
     }
@@ -219,6 +223,30 @@ async function addLinkToPyload(linkUrl) {
     return { success: true };
   } catch (error) {
     notify('Error', error.message);
+    return { success: false, error: error.message };
+  }
+}
+
+async function restartPackage(pid) {
+  try {
+    await apiFetch(`/api/restart_package/${pid}`, {
+      method: 'POST'
+    });
+    return { success: true };
+  } catch (error) {
+    console.error(`[pyLoad] Restart failed:`, error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function deleteFinished() {
+  try {
+    await apiFetch('/api/delete_finished', {
+      method: 'POST'
+    });
+    return { success: true };
+  } catch (error) {
+    console.error(`[pyLoad] Clean failed:`, error);
     return { success: false, error: error.message };
   }
 }

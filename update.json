@@ -1,0 +1,12 @@
+{
+  "addons": {
+    "pyload-connector@andrei.local": {
+      "updates": [
+        {
+          "version": "1.4",
+          "update_link": "https://github.com/andreiraceala/pyload-extension/releases/download/v1.4/pyload_connector-1.4.xpi"
+        }
+      ]
+    }
+  }
+}
