@@ -4,7 +4,7 @@ applyTo: ["**/*.js", "*.html"]
 ---
 
 # pyLoad-ng Extension Guidelines
- - Allways use semantic versioning
+ - Always use semantic versioning
  - Always add comments and documentation to the code
  - Always increment version in manifest.json when making changes
  - Always increment version in update.json when making changes
@@ -20,9 +20,9 @@ This is a WebExtensions (Manifest V3) browser extension with the following struc
 - **style.css**: Responsive styling for popup and options UI
 
 ## Branch management
-  - Allways create a new branch when making changes to the codebase, even for small fixes. This helps maintain a clean commit history and allows for easier code reviews.
-  - Allways keep the **master** branch stable and ready for release. Use feature branches for development and merge back to main only after thorough testing.
-  - Allways create a new branch for each feature or bug fix, following the naming convention:
+  - Always create a new branch when making changes to the codebase, even for small fixes. This helps maintain a clean commit history and allows for easier code reviews.
+  - Always keep the **master** branch stable and ready for release. Use feature branches for development and merge back to main only after thorough testing.
+  - Always create a new branch for each feature or bug fix, following the naming convention:
   - **master**: Stable releases
   - **develop**: Active development and integration
   - **feature/**: New features and experiments (e.g., `feature/new-ui`)

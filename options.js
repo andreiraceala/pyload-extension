@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Update header title and document title from manifest
+  const manifest = chrome.runtime.getManifest();
+  const nameWithVersion = manifest.name;
+  document.title = `${nameWithVersion} Settings`;
+  const headerTitle = document.getElementById('header-title');
+  if (headerTitle) {
+    headerTitle.textContent = nameWithVersion;
+  }
+
   const serverUrlInput = document.getElementById('server-url');
   const apiKeyInput = document.getElementById('api-key');
   const saveBtn = document.getElementById('save-btn');

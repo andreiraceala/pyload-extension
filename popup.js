@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // Update header title and document title from manifest
+  const manifest = chrome.runtime.getManifest();
+  const nameWithVersion = manifest.name;
+  document.title = nameWithVersion;
+  const headerTitle = document.querySelector('header h1');
+  if (headerTitle) {
+    headerTitle.textContent = nameWithVersion;
+  }
+
   const statusEl = document.getElementById('status');
   const downloadsContainer = document.getElementById('downloads-container');
   const queueContainer = document.getElementById('queue-container');
