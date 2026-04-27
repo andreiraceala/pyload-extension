@@ -24,7 +24,7 @@
   <!-- Tab Navigation -->
   <div class="tab-navigation">
     <button class="tab-button active" data-tab="active">Active</button>
-    <button class="tab-button" data-tab="history">History</button>
+    <button class="tab-button" data-tab="queue">Queue</button>
   </div>
 
   <!-- Active Downloads Tab -->
@@ -39,23 +39,23 @@
     </div>
   </section>
 
-  <!-- History Tab -->
-  <section class="tab-panel" id="tab-history">
-    <h2 style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Download History</h2>
+  <!-- Queue Tab -->
+  <section class="tab-panel" id="tab-queue">
+    <h2 style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Download Queue</h2>
     <div class="download-list">
-      <div id="history-container">
+      <div id="queue-container">
         <div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">
-          Click to load history...
+          Click to load queue...
         </div>
       </div>
     </div>
     <!-- Pagination Controls -->
     <div class="pagination-controls">
-      <button class="secondary" id="history-prev" disabled>Previous</button>
+      <button class="secondary" id="queue-prev" disabled>Previous</button>
       <span class="pagination-info">
         <span id="pagination-text">Loading...</span>
       </span>
-      <button class="secondary" id="history-next" disabled>Next</button>
+      <button class="secondary" id="queue-next" disabled>Next</button>
     </div>
   </section>
 

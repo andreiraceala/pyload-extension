@@ -3,18 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const addBtn = document.getElementById('add-btn');
   const statusEl = document.getElementById('status');
   const downloadsContainer = document.getElementById('downloads-container');
-  const historyContainer = document.getElementById('history-container');
+  const queueContainer = document.getElementById('queue-container');
   const openWebuiBtn = document.getElementById('open-webui');
   const openSettingsBtn = document.getElementById('open-settings');
   const tabButtons = document.querySelectorAll('.tab-button');
   const tabPanels = document.querySelectorAll('.tab-panel');
-  const historyPrevBtn = document.getElementById('history-prev');
-  const historyNextBtn = document.getElementById('history-next');
+  const queuePrevBtn = document.getElementById('queue-prev');
+  const queueNextBtn = document.getElementById('queue-next');
   const paginationText = document.getElementById('pagination-text');
 
   let serverUrl = '';
-  let historyLoaded = false;
-  let historyState = {
+  let queueLoaded = false;
+  let queueState = {
     offset: 0,
     limit: 50,
     total: 0,
@@ -55,9 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save preference
     chrome.storage.local.set({ lastTab: tabName });
 
-    // Load history when tab is first opened
-    if (tabName === 'history' && !historyLoaded) {
-      loadHistoryPage(0);
+    // Load queue when tab is first opened
+    if (tabName === 'queue' && !queueLoaded) {
+      loadQueuePage(0);
     }
   }
 
@@ -92,15 +92,15 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Pagination Controls
-  historyPrevBtn.addEventListener('click', () => {
-    if (historyState.offset > 0) {
-      loadHistoryPage(historyState.offset - historyState.limit);
+  queuePrevBtn.addEventListener('click', () => {
+    if (queueState.offset > 0) {
+      loadQueuePage(queueState.offset - queueState.limit);
     }
   });
 
-  historyNextBtn.addEventListener('click', () => {
-    if (historyState.offset + historyState.limit < historyState.total) {
-      loadHistoryPage(historyState.offset + historyState.limit);
+  queueNextBtn.addEventListener('click', () => {
+    if (queueState.offset + queueState.limit < queueState.total) {
+      loadQueuePage(queueState.offset + queueState.limit);
     }
   });
 
@@ -122,6 +122,22 @@ document.addEventListener('DOMContentLoaded', () => {
     14: 'Unknown'
   };
 
+  function escapeHtml(text) {
+    const map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    return text.replace(/[&<>"']/g, char => map[char]);
+  }
+
+  function setMessageContent(container, message) {
+    container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;"></div>';
+    container.querySelector('div').textContent = message;
+  }
+
   function updateActiveDownloads() {
     chrome.runtime.sendMessage({ type: 'GET_STATUS' }, (response) => {
       if (response && response.success) {
@@ -132,21 +148,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function loadHistoryPage(offset) {
-    historyContainer.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">Loading...</div>';
+  function loadQueuePage(offset) {
+    setMessageContent(queueContainer, 'Loading...');
     
     chrome.runtime.sendMessage(
-      { type: 'GET_DOWNLOAD_HISTORY', offset: offset, limit: historyState.limit },
+      { type: 'GET_QUEUE', offset: offset, limit: queueState.limit },
       (response) => {
         if (response && response.success) {
-          historyLoaded = true;
-          historyState.offset = offset;
-          historyState.total = response.total;
-          historyState.data = response.data;
-          renderHistory(response.data);
+          queueLoaded = true;
+          queueState.offset = offset;
+          queueState.total = response.total;
+          queueState.data = response.data;
+          renderQueue(response.data);
           updatePaginationControls();
         } else {
-          historyContainer.innerHTML = `<div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">Failed to load history: ${response?.error || 'Unknown error'}</div>`;
+          setMessageContent(queueContainer, `Failed to load queue: ${response?.error || 'Unknown error'}`);
         }
       }
     );
@@ -226,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderDownloads(downloads) {
     if (!downloads || downloads.length === 0) {
-      downloadsContainer.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No active downloads</div>';
+      setMessageContent(downloadsContainer, 'No active downloads');
       return;
     }
 
@@ -235,11 +251,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const statusClass = getStatusColor(dl.status);
       const speedText = dl.format_speed || formatSpeed(dl.speed);
       const sizeText = dl.format_size || '';
+      const safeName = escapeHtml(dl.name);
 
       return `
         <div class="download-item">
           <div class="download-info">
-            <span class="download-name" title="${dl.name}">${dl.name}</span>
+            <span class="download-name" title="${safeName}">${safeName}</span>
             <span class="download-status ${statusClass}">${statusText}</span>
           </div>
           <div class="progress-bar">
@@ -254,33 +271,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }).join('');
   }
 
-  function renderHistory(downloads) {
-    if (!downloads || downloads.length === 0) {
-      historyContainer.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">No downloads in history</div>';
+  function renderQueue(packages) {
+    if (!packages || packages.length === 0) {
+      setMessageContent(queueContainer, 'No packages in queue');
       return;
     }
 
-    historyContainer.innerHTML = downloads.map(dl => {
-      const statusText = STATUS_MAP[dl.status] || dl.statusmsg || 'Unknown';
-      const statusClass = getStatusColor(dl.status);
-      const sizeText = formatSize(dl.size || 0);
-      const speedText = dl.format_speed || formatSpeed(dl.speed || 0);
-      const dateText = formatDate(dl.added);
-      const durationText = dl.speed && dl.size ? formatDuration(dl.size / (dl.speed || 1)) : 'N/A';
+    queueContainer.innerHTML = packages.map(pkg => {
+      const sizeText = pkg.sizetotal ? formatSize(pkg.sizetotal) : 'Unknown size';
+      const doneText = pkg.sizedone ? formatSize(pkg.sizedone) : '0 B';
+      const linksText = `${pkg.linksdone || 0} / ${pkg.linkstotal || 0} links`;
+      const progress = pkg.sizetotal ? Math.round((pkg.sizedone / pkg.sizetotal) * 100) : 0;
+      const safeName = escapeHtml(pkg.name);
 
       return `
         <div class="download-item">
           <div class="download-info">
-            <span class="download-name" title="${dl.name}">${dl.name}</span>
-            <span class="download-status ${statusClass}">${statusText}</span>
+            <span class="download-name" title="${safeName}">${safeName}</span>
+            <span class="download-status queued">${linksText}</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width: ${progress}%"></div>
           </div>
           <div style="display: flex; justify-content: space-between; margin-top: 0.5rem; font-size: 0.75rem; color: var(--text-secondary);">
-            <span>${sizeText}</span>
-            <span>${speedText}</span>
-          </div>
-          <div style="display: flex; justify-content: space-between; margin-top: 0.25rem; font-size: 0.7rem; color: var(--text-secondary);">
-            <span>Added: ${dateText}</span>
-            <span>Duration: ${durationText}</span>
+            <span>${doneText} / ${sizeText}</span>
+            <span>${progress}%</span>
           </div>
         </div>
       `;
@@ -288,13 +303,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function updatePaginationControls() {
-    const endIndex = Math.min(historyState.offset + historyState.limit, historyState.total);
-    const startIndex = historyState.total === 0 ? 0 : historyState.offset + 1;
+    const endIndex = Math.min(queueState.offset + queueState.limit, queueState.total);
+    const startIndex = queueState.total === 0 ? 0 : queueState.offset + 1;
     
-    paginationText.textContent = `${startIndex}-${endIndex} of ${historyState.total}`;
+    paginationText.textContent = `${startIndex}-${endIndex} of ${queueState.total}`;
 
-    historyPrevBtn.disabled = historyState.offset === 0;
-    historyNextBtn.disabled = endIndex >= historyState.total;
+    queuePrevBtn.disabled = queueState.offset === 0;
+    queueNextBtn.disabled = endIndex >= queueState.total;
   }
 
   function showStatus(message, type) {
