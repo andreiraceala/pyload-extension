@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Get version from manifest.json
         id: get_version
@@ -49,7 +49,7 @@ jobs:
           git tag "$TAG"
           git push origin "$TAG"
 
-      - name: Build and sign extension
+      - name: Build extension
         if: steps.check_tag.outputs.exists == 'false'
         run: |
           npx web-ext build --overwrite-dest
