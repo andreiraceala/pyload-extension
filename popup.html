@@ -21,12 +21,41 @@
 
   <div id="status" class="status-msg"></div>
 
-  <section class="download-list">
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button class="tab-button active" data-tab="active">Active</button>
+    <button class="tab-button" data-tab="history">History</button>
+  </div>
+
+  <!-- Active Downloads Tab -->
+  <section class="tab-panel active" id="tab-active">
     <h2 style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Active Downloads</h2>
-    <div id="downloads-container">
-      <div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">
-        No active downloads
+    <div class="download-list">
+      <div id="downloads-container">
+        <div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">
+          No active downloads
+        </div>
       </div>
+    </div>
+  </section>
+
+  <!-- History Tab -->
+  <section class="tab-panel" id="tab-history">
+    <h2 style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 0.75rem;">Download History</h2>
+    <div class="download-list">
+      <div id="history-container">
+        <div style="text-align: center; color: var(--text-secondary); padding: 2rem 0;">
+          Click to load history...
+        </div>
+      </div>
+    </div>
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      <button class="secondary" id="history-prev" disabled>Previous</button>
+      <span class="pagination-info">
+        <span id="pagination-text">Loading...</span>
+      </span>
+      <button class="secondary" id="history-next" disabled>Next</button>
     </div>
   </section>
 
