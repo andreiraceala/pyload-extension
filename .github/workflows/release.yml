@@ -59,7 +59,7 @@ jobs:
       - name: Sign extension
         if: steps.check_tag.outputs.exists == 'false'
         run: |
-          npx web-ext sign --channel=listed --api-key=${{secrets.AMO_JWT_ISSUER}}  --api-secret=${{secrets.AMO_JWT_SECRET}}
+          npx web-ext sign --channel=unlisted --api-key=${{secrets.AMO_JWT_ISSUER}}  --api-secret=${{secrets.AMO_JWT_SECRET}}
 
       - name: Create Release
         if: steps.check_tag.outputs.exists == 'false'
